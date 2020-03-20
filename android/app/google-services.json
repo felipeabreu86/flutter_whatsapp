@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "684240895919",
+    "firebase_url": "https://whatsapp-projeto-c8a31.firebaseio.com",
+    "project_id": "whatsapp-projeto-c8a31",
+    "storage_bucket": "whatsapp-projeto-c8a31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:684240895919:android:c9f2841e6d817b6494f95a",
+        "android_client_info": {
+          "package_name": "br.com.felipemartinsabreu.flutter_whatsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "684240895919-30oigvfgsk5sa8i2h3dmqco65m6cd2rs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7-KuQjOWhDIfBTE_xLBX4tJ3dlQNiuEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "684240895919-30oigvfgsk5sa8i2h3dmqco65m6cd2rs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
