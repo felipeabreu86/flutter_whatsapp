@@ -1,21 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'home.dart';
+import 'Login.dart';
 
 void main() {
-
-  //WidgetsFlutterBinding.ensureInitialized();
-
   runApp(
     MaterialApp(
-      home: Home(),
+      home: Login(),
+      theme: ThemeData(
+        primaryColor: Color(0xff075E54),
+        accentColor: Color(0xff25D366),
+      ),
       debugShowCheckedModeBanner: false,
     ),
   );
-
-  Firestore.instance
-  .collection("usuarios")
-  .document("001")
-  .setData({"nome" : "Felipe Abreu"});
-
 }
