@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'Home.dart';
+import 'model/usuario.dart';
 
 class Cadastro extends StatefulWidget {
   @override
@@ -7,9 +10,12 @@ class Cadastro extends StatefulWidget {
 
 class _CadastroState extends State<Cadastro> {
   //Controladores
-  TextEditingController _controllerNome = TextEditingController();
-  TextEditingController _controllerEmail = TextEditingController();
-  TextEditingController _controllerSenha = TextEditingController();
+  TextEditingController _controllerNome =
+      TextEditingController(text: "Felipe Abreu");
+  TextEditingController _controllerEmail =
+      TextEditingController(text: "felipeabreu@gmail.com");
+  TextEditingController _controllerSenha =
+      TextEditingController(text: "1234567");
   String _mensagemErro = "";
 
   _validarCampos() {
@@ -20,14 +26,17 @@ class _CadastroState extends State<Cadastro> {
 
     if (nome.isNotEmpty) {
       if (email.isNotEmpty && email.contains("@")) {
-        if (senha.isNotEmpty) {
+        if (senha.isNotEmpty && senha.length > 6) {
           setState(() {
             _mensagemErro = "";
           });
-          _cadastrarUsuario();
+
+          Usuario usuario = Usuario(nome: nome, email: email, senha: senha);
+
+          _cadastrarUsuario(usuario);
         } else {
           setState(() {
-            _mensagemErro = "Preencha a senha!";
+            _mensagemErro = "Preencha a senha! digite mais de 6 caracteres";
           });
         }
       } else {
@@ -42,7 +51,32 @@ class _CadastroState extends State<Cadastro> {
     }
   }
 
-  _cadastrarUsuario() {}
+  _cadastrarUsuario(Usuario usuario) {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    auth
+        .createUserWithEmailAndPassword(
+      email: usuario.email,
+      password: usuario.senha,
+    )
+        .then(
+      (firebaseUser) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Home()),
+        );
+      },
+    ).catchError(
+      (error) {
+        print("erro app: " + error.toString());
+        setState(
+          () {
+            _mensagemErro =
+                "Erro ao cadastrar usuário, verifique os campos e tente novamente!";
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
