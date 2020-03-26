@@ -27,7 +27,6 @@ class Usuario {
     return {
       'nome': nome,
       'email': email,
-      'senha': senha,
     };
   }
 
@@ -37,7 +36,6 @@ class Usuario {
     return Usuario(
       nome: map['nome'],
       email: map['email'],
-      senha: map['senha'],
     );
   }
 

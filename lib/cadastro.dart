@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Home.dart';
-import 'model/usuario.dart';
+import 'model/Usuario.dart';
 
 class Cadastro extends StatefulWidget {
   @override
@@ -31,7 +32,10 @@ class _CadastroState extends State<Cadastro> {
             _mensagemErro = "";
           });
 
-          Usuario usuario = Usuario(nome: nome, email: email, senha: senha);
+          Usuario usuario = Usuario();
+          usuario.nome = nome;
+          usuario.email = email;
+          usuario.senha = senha;
 
           _cadastrarUsuario(usuario);
         } else {
@@ -53,29 +57,28 @@ class _CadastroState extends State<Cadastro> {
 
   _cadastrarUsuario(Usuario usuario) {
     FirebaseAuth auth = FirebaseAuth.instance;
+
     auth
         .createUserWithEmailAndPassword(
-      email: usuario.email,
-      password: usuario.senha,
-    )
-        .then(
-      (firebaseUser) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Home()),
-        );
-      },
-    ).catchError(
-      (error) {
-        print("erro app: " + error.toString());
-        setState(
-          () {
-            _mensagemErro =
-                "Erro ao cadastrar usuário, verifique os campos e tente novamente!";
-          },
-        );
-      },
-    );
+            email: usuario.email, password: usuario.senha)
+        .then((firebaseUser) {
+      //Salvar dados do usuário
+      Firestore db = Firestore.instance;
+
+      db
+          .collection("usuarios")
+          .document(firebaseUser.uid)
+          .setData(usuario.toMap());
+
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Home()));
+    }).catchError((error) {
+      print("erro app: " + error.toString());
+      setState(() {
+        _mensagemErro =
+            "Erro ao cadastrar usuário, verifique os campos e tente novamente!";
+      });
+    });
   }
 
   @override
