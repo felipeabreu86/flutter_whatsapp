@@ -67,7 +67,7 @@ class _CadastroState extends State<Cadastro> {
 
       db
           .collection("usuarios")
-          .document(firebaseUser.uid)
+          .document(firebaseUser.user.uid)
           .setData(usuario.toMap());
 
       Navigator.pushReplacement(
