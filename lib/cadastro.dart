@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Home.dart';
-import 'model/Usuario.dart';
+import 'model/usuario.dart';
 
 class Cadastro extends StatefulWidget {
   @override
@@ -70,8 +69,7 @@ class _CadastroState extends State<Cadastro> {
           .document(firebaseUser.user.uid)
           .setData(usuario.toMap());
 
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.pushNamedAndRemoveUntil(context, "/home", (_) => false);
     }).catchError((error) {
       print("erro app: " + error.toString());
       setState(() {

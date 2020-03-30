@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'Cadastro.dart';
-import 'Home.dart';
-import 'model/Usuario.dart';
+import 'cadastro.dart';
+import 'model/usuario.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -11,7 +10,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   TextEditingController _controllerEmail =
-      TextEditingController(text: "jamilton@gmail.com");
+      TextEditingController(text: "felipeabreu@gmail.com");
   TextEditingController _controllerSenha =
       TextEditingController(text: "1234567");
   String _mensagemErro = "";
@@ -51,8 +50,7 @@ class _LoginState extends State<Login> {
         .signInWithEmailAndPassword(
             email: usuario.email, password: usuario.senha)
         .then((firebaseUser) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.pushReplacementNamed(context, "/home");
     }).catchError((error) {
       setState(() {
         _mensagemErro =
@@ -68,8 +66,7 @@ class _LoginState extends State<Login> {
     FirebaseUser usuarioLogado = await auth.currentUser();
 
     if (usuarioLogado != null) {
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Home()));
+      Navigator.pushReplacementNamed(context, "/home");
     }
   }
 

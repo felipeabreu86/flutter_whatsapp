@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_whatsapp/telas/abaContatos.dart';
-import 'package:flutter_whatsapp/telas/abaConversas.dart';
-import 'Login.dart';
+import 'telas/abaContatos.dart';
+import 'telas/abaConversas.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -26,7 +25,9 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
     _recuperarDadosUsuario();
+
     _tabController = TabController(length: 2, vsync: this);
   }
 
@@ -39,14 +40,14 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         _deslogarUsuario();
         break;
     }
+    //print("Item escolhido: " + itemEscolhido );
   }
 
   _deslogarUsuario() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     await auth.signOut();
 
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => Login()));
+    Navigator.pushReplacementNamed(context, "/login");
   }
 
   @override
@@ -84,10 +85,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
       ),
       body: TabBarView(
         controller: _tabController,
-        children: <Widget>[
-          AbaConversas(),
-          AbaContatos(),
-        ],
+        children: <Widget>[AbaConversas(), AbaContatos()],
       ),
     );
   }
