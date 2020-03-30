@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'cadastro.dart';
+import 'configuracoes.dart';
 import 'home.dart';
 import 'login.dart';
 
@@ -14,6 +15,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Cadastro());
       case "/home":
         return MaterialPageRoute(builder: (_) => Home());
+      case "/configuracoes":
+        return MaterialPageRoute(builder: (_) => Configuracoes());
     }
     return _erroRota();
   }
