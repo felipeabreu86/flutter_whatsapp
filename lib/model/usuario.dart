@@ -4,6 +4,7 @@ class Usuario {
   String nome;
   String email;
   String senha;
+  String urlImagem;
   
   Usuario({
     this.nome,
