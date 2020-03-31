@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:io';
 
 class Configuracoes extends StatefulWidget {
@@ -68,16 +69,51 @@ class _ConfiguracoesState extends State<Configuracoes> {
 
   Future _recuperarUrlImagem(StorageTaskSnapshot snapshot) async {
     String url = await snapshot.ref.getDownloadURL();
+    _atualizarUrlImagemFirestore(url);
 
     setState(() {
       _urlImagemRecuperada = url;
     });
   }
 
+  _atualizarNomeFirestore() {
+    String nome = _controllerNome.text;
+    Firestore db = Firestore.instance;
+
+    Map<String, dynamic> dadosAtualizar = {"nome": nome};
+
+    db
+        .collection("usuarios")
+        .document(_idUsuarioLogado)
+        .updateData(dadosAtualizar);
+  }
+
+  _atualizarUrlImagemFirestore(String url) {
+    Firestore db = Firestore.instance;
+
+    Map<String, dynamic> dadosAtualizar = {"urlImagem": url};
+
+    db
+        .collection("usuarios")
+        .document(_idUsuarioLogado)
+        .updateData(dadosAtualizar);
+  }
+
   _recuperarDadosUsuario() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     FirebaseUser usuarioLogado = await auth.currentUser();
     _idUsuarioLogado = usuarioLogado.uid;
+
+    Firestore db = Firestore.instance;
+    DocumentSnapshot snapshot =
+        await db.collection("usuarios").document(_idUsuarioLogado).get();
+
+    Map<String, dynamic> dados = snapshot.data;
+    _controllerNome.text = dados["nome"];
+
+    if (dados["urlImagem"] != null) {
+      _urlImagemRecuperada = dados["urlImagem"];
+    }
   }
 
   @override
@@ -98,7 +134,12 @@ class _ConfiguracoesState extends State<Configuracoes> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                _subindoImagem ? CircularProgressIndicator() : Container(),
+                Container(
+                  padding: EdgeInsets.all(16),
+                  child: _subindoImagem
+                      ? CircularProgressIndicator()
+                      : Container(),
+                ),
                 CircleAvatar(
                     radius: 100,
                     backgroundColor: Colors.grey,
@@ -129,6 +170,9 @@ class _ConfiguracoesState extends State<Configuracoes> {
                     autofocus: true,
                     keyboardType: TextInputType.text,
                     style: TextStyle(fontSize: 20),
+                    /*onChanged: (texto){
+                      _atualizarNomeFirestore(texto);
+                    },*/
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                         hintText: "Nome",
@@ -149,7 +193,9 @@ class _ConfiguracoesState extends State<Configuracoes> {
                       padding: EdgeInsets.fromLTRB(32, 16, 32, 16),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(32)),
-                      onPressed: () {}),
+                      onPressed: () {
+                        _atualizarNomeFirestore();
+                      }),
                 )
               ],
             ),
