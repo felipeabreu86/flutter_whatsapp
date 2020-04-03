@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'cadastro.dart';
-import 'configuracoes.dart';
-import 'home.dart';
-import 'login.dart';
+import 'Cadastro.dart';
+import 'Configuracoes.dart';
+import 'Home.dart';
+import 'Login.dart';
+import 'Mensagens.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    final args = settings.arguments;
+
     switch (settings.name) {
       case "/":
         return MaterialPageRoute(builder: (_) => Login());
@@ -17,22 +20,22 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Home());
       case "/configuracoes":
         return MaterialPageRoute(builder: (_) => Configuracoes());
+      case "/mensagens":
+        return MaterialPageRoute(builder: (_) => Mensagens(args));
     }
     return _erroRota();
   }
 
   static Route<dynamic> _erroRota() {
-    return MaterialPageRoute(
-      builder: (_) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text("Tela não encontrada!"),
-          ),
-          body: Center(
-            child: Text("Tela não encontrada!"),
-          ),
-        );
-      },
-    );
+    return MaterialPageRoute(builder: (_) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text("Tela não encontrada!"),
+        ),
+        body: Center(
+          child: Text("Tela não encontrada!"),
+        ),
+      );
+    });
   }
 }

@@ -67,26 +67,30 @@ class _AbaContatosState extends State<AbaContatos> {
           case ConnectionState.active:
           case ConnectionState.done:
             return ListView.builder(
-              itemCount: snapshot.data.length,
-              itemBuilder: (_, indice) {
-                List<Usuario> listaItens = snapshot.data;
-                Usuario usuario = listaItens[indice];
+                itemCount: snapshot.data.length,
+                itemBuilder: (_, indice) {
+                  List<Usuario> listaItens = snapshot.data;
+                  Usuario usuario = listaItens[indice];
 
-                return ListTile(
-                  contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  leading: CircleAvatar(
-                      maxRadius: 30,
-                      backgroundColor: Colors.grey,
-                      backgroundImage: usuario.urlImagem != null
-                          ? NetworkImage(usuario.urlImagem)
-                          : null),
-                  title: Text(
-                    usuario.nome,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                );
-              },
-            );
+                  return ListTile(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/mensagens",
+                          arguments: usuario);
+                    },
+                    contentPadding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+                    leading: CircleAvatar(
+                        maxRadius: 30,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: usuario.urlImagem != null
+                            ? NetworkImage(usuario.urlImagem)
+                            : null),
+                    title: Text(
+                      usuario.nome,
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                  );
+                });
             break;
         }
         return null;
