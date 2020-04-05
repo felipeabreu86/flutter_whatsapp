@@ -1,16 +1,24 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'model/usuario.dart';
+import 'package:flutter_whatsapp/model/mensagem.dart';
+import 'package:flutter_whatsapp/model/usuario.dart';
 
 class Mensagens extends StatefulWidget {
   Usuario contato;
 
-  Mensagens(this.contato);
+  Mensagens(
+    Key key,
+    this.contato,
+  ) : super(key: key);
 
   @override
   _MensagensState createState() => _MensagensState();
 }
 
 class _MensagensState extends State<Mensagens> {
+  String _idUsuarioLogado;
+  String _idUsuarioDestinatario;
   List<String> listaMensagens = [
     "Olá meu amigo, tudo bem?",
     "Tudo ótimo!!! e contigo?",
@@ -28,9 +36,58 @@ class _MensagensState extends State<Mensagens> {
   ];
   TextEditingController _controllerMensagem = TextEditingController();
 
-  _enviarMensagem() {}
+  _enviarMensagem() {
+    String textoMensagem = _controllerMensagem.text;
+    if (textoMensagem.isNotEmpty) {
+      Mensagem mensagem = Mensagem();
+      mensagem.idUsuario = _idUsuarioLogado;
+      mensagem.mensagem = textoMensagem;
+      mensagem.urlImagem = "";
+      mensagem.tipo = "texto";
+
+      _salvarMensagem(_idUsuarioLogado, _idUsuarioDestinatario, mensagem);
+    }
+  }
+
+  _salvarMensagem(
+      String idRemetente, String idDestinatario, Mensagem msg) async {
+    Firestore db = Firestore.instance;
+
+    await db
+        .collection("mensagens")
+        .document(idRemetente)
+        .collection(idDestinatario)
+        .add(msg.toMap());
+
+    //Limpa texto
+    _controllerMensagem.clear();
+
+    /*
+
+    + mensagens
+      + jamiltondamasceno
+        + joserenato
+          + identicadorFirebase
+            <Mensagem>
+
+    * */
+  }
 
   _enviarFoto() {}
+
+  _recuperarDadosUsuario() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+    FirebaseUser usuarioLogado = await auth.currentUser();
+    _idUsuarioLogado = usuarioLogado.uid;
+
+    _idUsuarioDestinatario = widget.contato.idUsuario;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _recuperarDadosUsuario();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +168,20 @@ class _MensagensState extends State<Mensagens> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.contato.nome),
+        title: Row(
+          children: <Widget>[
+            CircleAvatar(
+                maxRadius: 20,
+                backgroundColor: Colors.grey,
+                backgroundImage: widget.contato.urlImagem != null
+                    ? NetworkImage(widget.contato.urlImagem)
+                    : null),
+            Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: Text(widget.contato.nome),
+            )
+          ],
+        ),
       ),
       body: Container(
         width: MediaQuery.of(context).size.width,

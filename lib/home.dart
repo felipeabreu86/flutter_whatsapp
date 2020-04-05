@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'telas/abaContatos.dart';
-import 'telas/abaConversas.dart';
+import 'package:flutter_whatsapp/telas/abaContatos.dart';
+import 'package:flutter_whatsapp/telas/abaConversas.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -22,12 +22,21 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     });
   }
 
+  Future _verificarUsuarioLogado() async {
+    FirebaseAuth auth = FirebaseAuth.instance;
+
+    FirebaseUser usuarioLogado = await auth.currentUser();
+
+    if (usuarioLogado == null) {
+      Navigator.pushReplacementNamed(context, "/login");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-
+    _verificarUsuarioLogado();
     _recuperarDadosUsuario();
-
     _tabController = TabController(length: 2, vsync: this);
   }
 

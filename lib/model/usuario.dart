@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 class Usuario {
+  String idUsuario;
   String nome;
   String email;
   String senha;
