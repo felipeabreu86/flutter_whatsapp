@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'model/Usuario.dart';
+import 'model/usuario.dart';
 
 class Mensagens extends StatefulWidget {
   Usuario contato;
@@ -11,6 +11,21 @@ class Mensagens extends StatefulWidget {
 }
 
 class _MensagensState extends State<Mensagens> {
+  List<String> listaMensagens = [
+    "Olá meu amigo, tudo bem?",
+    "Tudo ótimo!!! e contigo?",
+    "Estou muito bem!! queria ver uma coisa contigo, você vai na corrida de sábado?",
+    "Não sei ainda :(",
+    "Pq se você fosse, queria ver se posso ir com você...",
+    "Posso te confirma no sábado? vou ver isso",
+    "Opa! tranquilo",
+    "Excelente!!",
+    "Estou animado para essa corrida, não vejo a hora de chegar! ;) ",
+    "Vai estar bem legal!! muita gente",
+    "vai sim!",
+    "Lembra do carro que tinha te falado",
+    "Que legal!!"
+  ];
   TextEditingController _controllerMensagem = TextEditingController();
 
   _enviarMensagem() {}
@@ -56,6 +71,44 @@ class _MensagensState extends State<Mensagens> {
       ),
     );
 
+    var listView = Expanded(
+      child: ListView.builder(
+          itemCount: listaMensagens.length,
+          itemBuilder: (context, indice) {
+            double larguraContainer = MediaQuery.of(context).size.width * 0.8;
+
+            //larguraContainer -> 100
+            //x                -> 80
+
+            //Define cores e alinhamentos
+            Alignment alinhamento = Alignment.centerRight;
+            Color cor = Color(0xffd2ffa5);
+            if (indice % 2 == 0) {
+              //par
+              alinhamento = Alignment.centerLeft;
+              cor = Colors.white;
+            }
+
+            return Align(
+              alignment: alinhamento,
+              child: Padding(
+                padding: EdgeInsets.all(6),
+                child: Container(
+                  width: larguraContainer,
+                  padding: EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                      color: cor,
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  child: Text(
+                    listaMensagens[indice],
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ),
+            );
+          }),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.contato.nome),
@@ -70,10 +123,8 @@ class _MensagensState extends State<Mensagens> {
           padding: EdgeInsets.all(8),
           child: Column(
             children: <Widget>[
-              Text("listview"),
+              listView,
               caixaMensagem,
-              //listview
-              //caixa mensagem
             ],
           ),
         )),
