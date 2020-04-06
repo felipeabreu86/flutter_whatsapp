@@ -1,16 +1,13 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_whatsapp/model/mensagem.dart';
-import 'package:flutter_whatsapp/model/usuario.dart';
+import 'model/mensagem.dart';
+import 'model/Usuario.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Mensagens extends StatefulWidget {
   Usuario contato;
 
-  Mensagens(
-    Key key,
-    this.contato,
-  ) : super(key: key);
+  Mensagens(this.contato);
 
   @override
   _MensagensState createState() => _MensagensState();
@@ -19,6 +16,8 @@ class Mensagens extends StatefulWidget {
 class _MensagensState extends State<Mensagens> {
   String _idUsuarioLogado;
   String _idUsuarioDestinatario;
+  Firestore db = Firestore.instance;
+
   List<String> listaMensagens = [
     "Olá meu amigo, tudo bem?",
     "Tudo ótimo!!! e contigo?",
@@ -51,8 +50,6 @@ class _MensagensState extends State<Mensagens> {
 
   _salvarMensagem(
       String idRemetente, String idDestinatario, Mensagem msg) async {
-    Firestore db = Firestore.instance;
-
     await db
         .collection("mensagens")
         .document(idRemetente)
@@ -128,6 +125,82 @@ class _MensagensState extends State<Mensagens> {
       ),
     );
 
+    var stream = StreamBuilder(
+      stream: db
+          .collection("mensagens")
+          .document(_idUsuarioLogado)
+          .collection(_idUsuarioDestinatario)
+          .snapshots(),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            return Center(
+              child: Column(
+                children: <Widget>[
+                  Text("Carregando mensagens"),
+                  CircularProgressIndicator()
+                ],
+              ),
+            );
+            break;
+          case ConnectionState.active:
+          case ConnectionState.done:
+            QuerySnapshot querySnapshot = snapshot.data;
+
+            if (snapshot.hasError) {
+              return Expanded(
+                child: Text("Erro ao carregar os dados!"),
+              );
+            } else {
+              return Expanded(
+                child: ListView.builder(
+                    itemCount: querySnapshot.documents.length,
+                    itemBuilder: (context, indice) {
+                      //recupera mensagem
+                      List<DocumentSnapshot> mensagens =
+                          querySnapshot.documents.toList();
+                      DocumentSnapshot item = mensagens[indice];
+
+                      double larguraContainer =
+                          MediaQuery.of(context).size.width * 0.8;
+
+                      //Define cores e alinhamentos
+                      Alignment alinhamento = Alignment.centerRight;
+                      Color cor = Color(0xffd2ffa5);
+                      if (_idUsuarioLogado != item["idUsuario"]) {
+                        alinhamento = Alignment.centerLeft;
+                        cor = Colors.white;
+                      }
+
+                      return Align(
+                        alignment: alinhamento,
+                        child: Padding(
+                          padding: EdgeInsets.all(6),
+                          child: Container(
+                            width: larguraContainer,
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                                color: cor,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
+                            child: Text(
+                              item["mensagem"],
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+              );
+            }
+
+            break;
+        }
+        return null;
+      },
+    );
+
     var listView = Expanded(
       child: ListView.builder(
           itemCount: listaMensagens.length,
@@ -193,7 +266,7 @@ class _MensagensState extends State<Mensagens> {
           padding: EdgeInsets.all(8),
           child: Column(
             children: <Widget>[
-              listView,
+              stream,
               caixaMensagem,
             ],
           ),

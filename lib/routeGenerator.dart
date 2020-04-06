@@ -22,8 +22,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => Configuracoes());
       case "/mensagens":
         return MaterialPageRoute(builder: (_) => Mensagens(args));
+      default:
+        _erroRota();
     }
-    return _erroRota();
+
+    return null;
   }
 
   static Route<dynamic> _erroRota() {
